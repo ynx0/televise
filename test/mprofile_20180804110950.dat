@@ -1,0 +1,5 @@
+CMDLINE C:\Users\lux\AppData\Local\Programs\Python\Python36\python.exe ../antenna_async.py --include-children
+MEM 0.605469 1533395390.5533
+MEM 17.945312 1533395390.6535
+MEM 26.359375 1533395390.7538
+MEM 33.636719 1533395390.8541
