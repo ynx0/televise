@@ -61,7 +61,7 @@ def show_img():
     while True:
         global frame_num
         global initial_buf
-        
+
         last_time = time.time() + 0.000001  # hacky stuff to stop divide by zero error idk
         if initial_buf:
             if frame_buffer.full():
