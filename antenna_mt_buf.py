@@ -14,6 +14,7 @@ frame_num = 0
 frame_buffer = Queue(maxsize=buffer_length)
 num_threads = 5
 dbg = False
+initial_buf = True
 
 try:
     port = int(sys.argv[0])
@@ -59,18 +60,28 @@ def show_img():
     frame_proc_num = 0
     while True:
         global frame_num
+        global initial_buf
+        
         last_time = time.time() + 0.000001  # hacky stuff to stop divide by zero error idk
-        if not frame_buffer.empty():
-            # while not frame_buffer.empty(): # can't use nested loop b/c it interferes with cv2.waitkey,
-            # which is needed other wise it screws everything up.
-            # here, we keep the frame serialized to save memory
-            # until we really need it, then we unserialize it/decompress it
-            try:
-                b = frame_buffer.get(block=False)
-                img = deserialize_blosc(b)
-                cv2.imshow('OpenCV/Numpy normal', img)
-            except Empty:
-                logger.warn("No frames in framebuffer when expected")
+        if initial_buf:
+            if frame_buffer.full():
+                while not frame_buffer.empty():
+                    b = frame_buffer.get()
+                    img = deserialize_blosc(b)
+                    cv2.imshow('Televise Buffer', img)
+                    initial_buf = False
+        else:
+            if not frame_buffer.empty():
+                # while not frame_buffer.empty(): # can't use nested loop b/c it interferes with cv2.waitkey,
+                # which is needed other wise it screws everything up.
+                # here, we keep the frame serialized to save memory
+                # until we really need it, then we unserialize it/decompress it
+                try:
+                    b = frame_buffer.get(block=False)
+                    img = deserialize_blosc(b)
+                    cv2.imshow('Televise', img)
+                except Empty:
+                    logger.warn("No frames in framebuffer when expected")
 
         fps = 1 / (time.time() - last_time)
         frame_proc_num += 1

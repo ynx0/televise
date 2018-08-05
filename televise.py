@@ -1,3 +1,5 @@
+import time
+
 import numpy
 import keyboard as kbd
 import mss
@@ -20,14 +22,17 @@ def main():
 
     with mss.mss() as sct:
         while True:
+            last_time = time.time() + 0.00001
             img = numpy.array(sct.grab(monitor_region))
             img = serialize_blosc(img)
-            # pub.send_pyobj(img)
+
             pub.send_multipart([Topics.FRAME_EVENT, img])
-            # print("Sending img" + str(img))
+
             if kbd.is_pressed('ctrl+alt+/'):
                 logger.info("Exitting due to quit hotkey")
                 break
+
+            print('fps: {0}'.format(1 / (time.time() - last_time)))
 
 
 if __name__ == '__main__':
