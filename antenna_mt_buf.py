@@ -68,7 +68,7 @@ def show_img():
                 while not frame_buffer.empty():
                     b = frame_buffer.get()
                     img = deserialize_blosc(b)
-                    cv2.imshow('Televise Buffer', img)
+                    cv2.imshow('Televise', img)
                     initial_buf = False
         else:
             if not frame_buffer.empty():
